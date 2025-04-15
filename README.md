@@ -1,7 +1,12 @@
 # tools-me
-> install package install-tools.sh
-<br>
-> Run bash tools-me.sh
-<br>
-> OR ./tools-me.sh
-<br>
+# Clone repository
+git clone https://github.com/username/tools-me.git
+cd tools-me
+
+# Jalankan installer package terlebih dahulu
+bash install-tools.sh
+
+# Lalu jalankan tools-me
+bash tools-me.sh
+# atau
+./tools-me.sh
