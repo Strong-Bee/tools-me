@@ -2,7 +2,7 @@
 # Clone repository
 git https://github.com/Strong-Bee/tools-me.git
 
-#Buka Folder
+# Buka Folder
 cd tools-me
 
 # Jalankan installer package terlebih dahulu
