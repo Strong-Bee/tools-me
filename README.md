@@ -1,6 +1,6 @@
 # tools-me
 # Clone repository
-git https://github.com/Strong-Bee/tools-me.git
+git clone https://github.com/Strong-Bee/tools-me.git
 
 # Buka Folder
 cd tools-me
