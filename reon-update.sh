@@ -28,8 +28,9 @@ echo "4) Filter URLs with Parameters"
 echo "5) GF Pattern Filtering"
 echo "6) Jalankan Semua"
 echo "7) Keluar"
+echo "8) Cari Form Login dan Upload"
 
-read -p "Masukkan pilihan [1-7]: " CHOICE
+read -p "Masukkan pilihan [1-8]: " CHOICE
 
 case $CHOICE in
     1)
@@ -62,7 +63,7 @@ case $CHOICE in
             echo -e "${CYAN}-- Possible XSS --${NC}"
             echo $DOMAIN | gau | grep "=" | gf xss
 
-            echo -e "${CYAN}-- Possible SQLi --${NC}"
+            echo -e "${CYAN}-- Possible SQLi --${NC}."
             echo $DOMAIN | gau | grep "=" | gf sqli
         else
             echo -e "${YELLOW}[!] gf not installed. Skipping gf filtering...${NC}"
@@ -98,6 +99,38 @@ case $CHOICE in
     7)
         echo -e "${CYAN}Bye!${NC}"
         exit 0
+        ;;
+    8)
+        echo -e "${GREEN}[+] Mencari form login dan upload di historical URLs...${NC}"
+
+        # Gabungkan hasil dari waybackurls dan gau
+        echo -e "${CYAN}[*] Mengumpulkan URL dari waybackurls & gau...${NC}"
+        URLS=$( (echo $DOMAIN | waybackurls; echo $DOMAIN | gau) | sort -u )
+
+        # Simpan URL yang mencurigakan (mengandung keyword login/upload)
+        echo "$URLS" | grep -Ei 'login|signin|auth|admin|upload' > potential_forms.txt
+
+        echo -e "${CYAN}[*] Memeriksa keberadaan form pada URL...${NC}"
+        > found_forms.txt
+
+        while read url; do
+            echo -e "${YELLOW}[Checking] $url${NC}"
+
+            RESPONSE=$(curl -sk --max-time 10 "$url" | grep -Ei '<form|type=["'\'']?file["'\'']?|type=["'\'']?password["'\'']?>')
+
+            if [[ ! -z "$RESPONSE" ]]; then
+                echo -e "${GREEN}[+] Form ditemukan di: $url${NC}"
+                echo "$url" >> found_forms.txt
+            fi
+        done < potential_forms.txt
+
+        if [ -s found_forms.txt ]; then
+            echo -e "${GREEN}[✔] Form login/upload ditemukan. Lihat file: found_forms.txt${NC}"
+        else
+            echo -e "${YELLOW}[-] Tidak ditemukan form login atau upload.${NC}"
+        fi
+
+        rm -f potential_forms.txt
         ;;
     *)
         echo -e "${YELLOW}[!] Pilihan tidak valid.${NC}"
