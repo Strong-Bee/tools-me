@@ -114,5 +114,3 @@ bash recon-update.sh
 
 <h3 align="center">💡 Dibuat dengan semangat oleh <a href="https://github.com/Strong-Bee">Strong Bee Developer</a></h3>
 ```
-
----
