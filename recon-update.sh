@@ -39,7 +39,7 @@ case $CHOICE in
         ;;
     2)
         echo -e "${GREEN}[+] Checking live subdomains with httpx...${NC}"
-        subfinder -d "$DOMAIN" -silent | httpx -status-code -title -silent
+        subfinder -d "$DOMAIN" -silent | httpx -sc -title
         ;;
     3)
         echo -e "${GREEN}[+] Collecting historical URLs with waybackurls...${NC}"
@@ -108,7 +108,7 @@ case $CHOICE in
         subfinder -d "$DOMAIN" -silent
 
         echo -e "${GREEN}[+] Checking live subdomains with httpx...${NC}"
-        subfinder -d "$DOMAIN" -silent | httpx -status-code -title -silent
+        subfinder -d "$DOMAIN" -silent | httpx -sc -title
 
         echo -e "${GREEN}[+] Collecting historical URLs with waybackurls...${NC}"
         echo "$DOMAIN" | waybackurls
