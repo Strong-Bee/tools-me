@@ -35,77 +35,46 @@ read -p "Masukkan pilihan [1-8]: " CHOICE
 case $CHOICE in
     1)
         echo -e "${GREEN}[+] Finding subdomains with subfinder...${NC}"
-        subfinder -d $DOMAIN -silent
+        subfinder -d "$DOMAIN" -silent
         ;;
     2)
         echo -e "${GREEN}[+] Checking live subdomains with httpx...${NC}"
-        subfinder -d $DOMAIN -silent | httpx -status-code -title -silent
+        subfinder -d "$DOMAIN" -silent | httpx -status-code -title -silent
         ;;
     3)
         echo -e "${GREEN}[+] Collecting historical URLs with waybackurls...${NC}"
-        echo $DOMAIN | waybackurls
+        echo "$DOMAIN" | waybackurls
 
         echo -e "${GREEN}[+] Collecting historical URLs with gau...${NC}"
-        echo $DOMAIN | gau
+        echo "$DOMAIN" | gau
         ;;
     4)
         echo -e "${GREEN}[+] Filtering URLs with parameters (from both sources)...${NC}"
         echo -e "${CYAN}-- URL with '=' from waybackurls --${NC}"
-        echo $DOMAIN | waybackurls | grep "="
+        echo "$DOMAIN" | waybackurls | grep "="
 
         echo -e "${CYAN}-- URL with '=' from gau --${NC}"
-        echo $DOMAIN | gau | grep "="
+        echo "$DOMAIN" | gau | grep "="
         ;;
     5)
         if command -v gf &> /dev/null; then
             echo -e "${GREEN}[+] Filtering with gf patterns...${NC}"
 
             echo -e "${CYAN}-- Possible XSS --${NC}"
-            echo $DOMAIN | gau | grep "=" | gf xss
+            echo "$DOMAIN" | gau | grep "=" | gf xss
 
-            echo -e "${CYAN}-- Possible SQLi --${NC}."
-            echo $DOMAIN | gau | grep "=" | gf sqli
+            echo -e "${CYAN}-- Possible SQLi --${NC}"
+            echo "$DOMAIN" | gau | grep "=" | gf sqli
         else
             echo -e "${YELLOW}[!] gf not installed. Skipping gf filtering...${NC}"
         fi
         ;;
     6)
-        echo -e "${GREEN}[+] Running full recon...${NC}"
-
-        echo -e "${GREEN}[+] Finding subdomains with subfinder...${NC}"
-        subfinder -d $DOMAIN -silent
-
-        echo -e "${GREEN}[+] Checking live subdomains with httpx...${NC}"
-        subfinder -d $DOMAIN -silent | httpx -status-code -title -silent
-
-        echo -e "${GREEN}[+] Collecting historical URLs with waybackurls...${NC}"
-        echo $DOMAIN | waybackurls
-
-        echo -e "${GREEN}[+] Collecting historical URLs with gau...${NC}"
-        echo $DOMAIN | gau
-
-        echo -e "${GREEN}[+] Filtering URLs with parameters (from both sources)...${NC}"
-        echo $DOMAIN | waybackurls | grep "="
-        echo $DOMAIN | gau | grep "="
-
-        if command -v gf &> /dev/null; then
-            echo -e "${GREEN}[+] Filtering with gf patterns...${NC}"
-            echo $DOMAIN | gau | grep "=" | gf xss
-            echo $DOMAIN | gau | grep "=" | gf sqli
-        else
-            echo -e "${YELLOW}[!] gf not installed. Skipping gf filtering...${NC}"
-        fi
-        ;;
-    7)
-        echo -e "${CYAN}Bye!${NC}"
-        exit 0
-        ;;
-    8)
         echo -e "${GREEN}[+] Mencari form login dan upload di historical URLs...${NC}"
 
         # Gabungkan hasil dari waybackurls dan gau
         echo -e "${CYAN}[*] Mengumpulkan URL dari waybackurls & gau...${NC}"
-        URLS=$( (echo $DOMAIN | waybackurls; echo $DOMAIN | gau) | sort -u )
+        URLS=$( (echo "$DOMAIN" | waybackurls; echo "$DOMAIN" | gau) | sort -u )
 
         # Simpan URL yang mencurigakan (mengandung keyword login/upload)
         echo "$URLS" | grep -Ei 'login|signin|auth|admin|upload' > potential_forms.txt
@@ -113,12 +82,12 @@ case $CHOICE in
         echo -e "${CYAN}[*] Memeriksa keberadaan form pada URL...${NC}"
         > found_forms.txt
 
-        while read url; do
+        while read -r url; do
             echo -e "${YELLOW}[Checking] $url${NC}"
 
-            RESPONSE=$(curl -sk --max-time 10 "$url" | grep -Ei '<form|type=["'\'']?file["'\'']?|type=["'\'']?password["'\'']?>')
+            RESPONSE=$(curl -sk --max-time 10 "$url" | grep -Eio '<form|type=["'\'']?file["'\'']?|type=["'\'']?password["'\'']?>')
 
-            if [[ ! -z "$RESPONSE" ]]; then
+            if [[ -n "$RESPONSE" ]]; then
                 echo -e "${GREEN}[+] Form ditemukan di: $url${NC}"
                 echo "$url" >> found_forms.txt
             fi
@@ -131,6 +100,37 @@ case $CHOICE in
         fi
 
         rm -f potential_forms.txt
+        ;;
+    7)
+        echo -e "${GREEN}[+] Running full recon...${NC}"
+
+        echo -e "${GREEN}[+] Finding subdomains with subfinder...${NC}"
+        subfinder -d "$DOMAIN" -silent
+
+        echo -e "${GREEN}[+] Checking live subdomains with httpx...${NC}"
+        subfinder -d "$DOMAIN" -silent | httpx -status-code -title -silent
+
+        echo -e "${GREEN}[+] Collecting historical URLs with waybackurls...${NC}"
+        echo "$DOMAIN" | waybackurls
+
+        echo -e "${GREEN}[+] Collecting historical URLs with gau...${NC}"
+        echo "$DOMAIN" | gau
+
+        echo -e "${GREEN}[+] Filtering URLs with parameters (from both sources)...${NC}"
+        echo "$DOMAIN" | waybackurls | grep "="
+        echo "$DOMAIN" | gau | grep "="
+
+        if command -v gf &> /dev/null; then
+            echo -e "${GREEN}[+] Filtering with gf patterns...${NC}"
+            echo "$DOMAIN" | gau | grep "=" | gf xss
+            echo "$DOMAIN" | gau | grep "=" | gf sqli
+        else
+            echo -e "${YELLOW}[!] gf not installed. Skipping gf filtering...${NC}"
+        fi
+        ;;
+    8)
+        echo -e "${CYAN}Bye!${NC}"
+        exit 0
         ;;
     *)
         echo -e "${YELLOW}[!] Pilihan tidak valid.${NC}"
