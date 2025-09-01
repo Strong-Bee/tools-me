@@ -1,5 +1,3 @@
-````markdown
-
 <h1 align="center">🕵️‍♂️ tools-me</h1>
 <p align="center">
   <i>Bug Bounty Recon Toolkit - Simple, Fast, and Powerful</i>
@@ -10,6 +8,26 @@
   <img src="https://img.shields.io/badge/Language-Bash-green?style=for-the-badge"/>
   <img src="https://img.shields.io/badge/Status-Active-success?style=for-the-badge"/>
 </p>
+
+---
+
+## ✨ Fitur
+
+- 🔍 **Subdomain Enumeration** (via `subfinder`)  
+- 🌐 **Check Live Subdomains** (via `httpx`)  
+- 📜 **Historical URLs** (via `waybackurls` & `gau`)  
+- 🧩 **Filter URLs with Parameters**  
+- 🎯 **GF Pattern Filtering** (`xss`, `sqli`, dll)  
+- 🔑 **Cari Form Login & Upload**  
+- ⚡ **One-Click Full Recon**  
+
+---
+
+## 📥 Clone Repository
+
+```bash
+git clone https://github.com/Strong-Bee/tools-me.git
+cd tools-me
 
 ---
 
