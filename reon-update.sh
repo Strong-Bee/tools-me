@@ -26,9 +26,9 @@ echo "2) Check Live Subdomains"
 echo "3) Historical URLs"
 echo "4) Filter URLs with Parameters"
 echo "5) GF Pattern Filtering"
-echo "6) Jalankan Semua"
-echo "7) Keluar"
-echo "8) Cari Form Login dan Upload"
+echo "6) Cari Form Login dan Upload"
+echo "7) Jalankan Semua"
+echo "8) Keluar"
 
 read -p "Masukkan pilihan [1-8]: " CHOICE
 
